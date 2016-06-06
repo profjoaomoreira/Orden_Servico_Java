@@ -8,7 +8,7 @@ package br.com.infox.telas;
 import java.sql.*;
 import br.com.infox.dal.ModuloConexao;
 import javax.swing.JOptionPane;
-import jdk.nashorn.internal.ir.TryNode;
+//import jdk.nashorn.internal.ir.TryNode;
 //a linha abaixo importa recursos da biblioteca rs2xml.jar
 import net.proteanit.sql.DbUtils;
 
