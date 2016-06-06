@@ -5,17 +5,40 @@
  */
 package br.com.infox.telas;
 
+import java.sql.*;
+import br.com.infox.dal.ModuloConexao;
+import javax.swing.JOptionPane;
+import net.proteanit.sql.DbUtils;
+
 /**
  *
  * @author joao
  */
 public class TelaOS extends javax.swing.JInternalFrame {
 
+    Connection conexao = null;
+    PreparedStatement rs = null;
+    ResultSet rs = null;
+
     /**
      * Creates new form TelaOS
      */
     public TelaOS() {
         initComponents();
+        conexao = ModuloConexao.conector();
+    }
+
+    private void pesquisar_cliente() {
+        String sql = "select idcli as Id, nomecli as Nome, fonecli as Fone from tbclientes where nomecli like ?";
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, txtCliPesquisar.getText() + "%");
+            rs=pst.executeQuery();
+            tblClientes.setModel(DbUtils.resultSetToTableModel(rs));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+
     }
 
     /**
@@ -158,6 +181,11 @@ public class TelaOS extends javax.swing.JInternalFrame {
         txtCliPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCliPesquisarActionPerformed(evt);
+            }
+        });
+        txtCliPesquisar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCliPesquisarKeyReleased(evt);
             }
         });
 
@@ -412,6 +440,11 @@ public class TelaOS extends javax.swing.JInternalFrame {
     private void txtCliPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCliPesquisarActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCliPesquisarActionPerformed
+
+    private void txtCliPesquisarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCliPesquisarKeyReleased
+        // chamando o metodo pesquisar cliente:
+    pesquisar_cliente();       
+    }//GEN-LAST:event_txtCliPesquisarKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
