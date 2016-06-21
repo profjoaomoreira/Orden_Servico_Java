@@ -18,12 +18,12 @@ public class ModuloConexao {
         // a linha abaixo "chama" o driver
         String driver = "com.mysql.jdbc.Driver";
         // Armazenando informacoes referente ao banco
-        String url = "jdbc:mysql://182.168.1.104:3306/dbinfox";
+        //String url = "jdbc:mysql://182.168.1.104:3306/dbinfox";
         
         //para acessar o wampp use a linha abaixo
-        //String url = "jdbc:mysql://localhost:3306/dbinfox";
+        String url = "jdbc:mysql://localhost:3306/dbinfox";
         String user = "root";
-        String password = "root";
+        String password = "";
         // Estabelecendo a conexao com o banco
         try {
             Class.forName(driver);
