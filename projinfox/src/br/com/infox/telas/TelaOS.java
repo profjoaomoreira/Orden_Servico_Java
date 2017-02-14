@@ -15,8 +15,9 @@ import net.proteanit.sql.DbUtils;
  * @author joao
  */
 public class TelaOS extends javax.swing.JInternalFrame {
-    Connection conexao=null;
-    PreparedStatement pst=null;
+
+    Connection conexao = null;
+    PreparedStatement pst = null;
     ResultSet rs = null;
     // a linha abaixo cria uma variavel para armazenar um texto de acordo com o radion button selecionado
     private String tipo;
@@ -34,82 +35,172 @@ public class TelaOS extends javax.swing.JInternalFrame {
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txtCliPesquisar.getText() + "%");
-            rs=pst.executeQuery();
+            rs = pst.executeQuery();
             tblClientes.setModel(DbUtils.resultSetToTableModel(rs));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
 
     }
-    private void setar_campos(){
+
+    private void setar_campos() {
         int setar = tblClientes.getSelectedRow();
         txtCliId.setText(tblClientes.getModel().getValueAt(setar, 0).toString());
     }
-    
+
     // metodo para cadastrar uma os
-    private void emitir_os(){
+    private void emitir_os() {
         String sql = "insert into tbos(tipo, situacao,equipamento,defeito,servico,tecnico,valor,idcli) values(?,?,?,?,?,?,?,?)";
-           try {
-    pst=conexao.prepareStatement(sql);
-    pst.setString(1,tipo);
-    pst.setString(2,cboOsSit.getSelectedItem().toString());
-    pst.setString(3, txtOsEquip.getText());
-    pst.setString(4, txtOsDef.getText()); 
-    pst.setString(5, txtOsServ.getText());
-    pst.setString(6, txtOsTec.getText());
-    //.replace substitui a virgula pelo ponto
-    pst.setString(7, txtOsValor.getText().replace(",","."));
-    pst.setString(8, txtCliId.getText());
-    //validacao dos campos obrigatorios
-    if ((txtCliId.getText().isEmpty())||(txtOsEquip.getText().isEmpty())||(txtOsDef.getText().isEmpty())) {
-                    JOptionPane.showMessageDialog(null, "preencha todos os campos obrigatorios");
-                    
-                } else {
-    int adicionado = pst.executeUpdate();
-    if (adicionado > 0){
-JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
-            txtCliId.setText(null);
-            txtOsEquip.setText(null);
-            txtOsDef.setText(null);
-            txtOsTec.setText(null);
-            txtOsValor.setText(null);
-                }
-    }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
-            }
-    }
- //metodo para pesquisar uma os
-    private void pesquisar_os(){
-        //a linha abaixo cria uma caixa de entrada do tipo Joption Pane
-        String num_os=JOptionPane.showInputDialog("Numero da OS");
-        String sql= "select * from tbos where os= " + num_os;
-        try { 
-            pst=conexao.prepareStatement(sql);
-            rs=pst.executeQuery();
-            if (rs.next()) {
-                txtOs.setText(rs.getString(1));
-                txtData.setText(rs.getString(2));
-                //setando os radios buttons
-                String rbtTipo=rs.getString(3);
-                if (rbtTipo.equals("OS")){
-                    rbtOs.setSelected(true);
-                    tipo="OS";
-                                
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, tipo);
+            pst.setString(2, cboOsSit.getSelectedItem().toString());
+            pst.setString(3, txtOsEquip.getText());
+            pst.setString(4, txtOsDef.getText());
+            pst.setString(5, txtOsServ.getText());
+            pst.setString(6, txtOsTec.getText());
+            //.replace substitui a virgula pelo ponto
+            pst.setString(7, txtOsValor.getText().replace(",", "."));
+            pst.setString(8, txtCliId.getText());
+            //validacao dos campos obrigatorios
+            if ((txtCliId.getText().isEmpty()) || (txtOsEquip.getText().isEmpty()) || (txtOsDef.getText().isEmpty())) {
+                JOptionPane.showMessageDialog(null, "preencha todos os campos obrigatorios");
+
             } else {
-                    rbtOrc.setSelected(true);
-                    tipo="Orçamento";
+                int adicionado = pst.executeUpdate();
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
+                    txtCliId.setText(null);
+                    txtOsEquip.setText(null);
+                    txtOsDef.setText(null);
+                    txtOsServ.setText(null);
+                    txtOsTec.setText(null);
+                    txtOsValor.setText(null);
                 }
-                
-            } else {
-                JOptionPane.showMessageDialog(null, "Os nao cadastra");
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-        
- 
+    //metodo para pesquisar uma os
+
+    private void pesquisar_os() {
+        //a linha abaixo cria uma caixa de entrada do tipo Joption Pane
+        String num_os = JOptionPane.showInputDialog("Numero da OS");
+        String sql = "select * from tbos where os= " + num_os;
+        try {
+            pst = conexao.prepareStatement(sql);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                txtOs.setText(rs.getString(1));
+                txtData.setText(rs.getString(2));
+                //setando os radios buttons
+                String rbtTipo=rs.getString(3);
+                if (rbtTipo.equals("os")) {
+                    rbtOs.setSelected(true);
+                    tipo="os";
+                } else {
+                    rbtOrc.setSelected(true);
+                    tipo="Orcamento";
+                }
+                cboOsSit.setSelectedItem(rs.getString(4));
+                txtOsEquip.setText(rs.getString(5));
+                txtOsDef.setText(rs.getString(6));
+                txtOsServ.setText(rs.getString(7));
+                txtOsTec.setText(rs.getString(8));
+                txtOsValor.setText(rs.getString(9));
+                txtCliId.setText(rs.getString(10));
+                //evitando problemas
+                btnOsAdicionar.setEnabled(false);
+                txtCliPesquisar.setEnabled(false);
+                tblClientes.setVisible(false);
+            } else {
+                JOptionPane.showMessageDialog(null, "Os não cadastra");
+            }
+        } catch (com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException e) {
+            JOptionPane.showMessageDialog(null, "OS Invalida");
+            //System.out.println(e);
+        } catch (Exception e2) {
+            JOptionPane.showMessageDialog(null, e2);
+        }
+    }
+    //INICIO metodo para ALTERAR UMA OS
+
+    private void alterar_os() {
+
+        String sql = "update tbos set tipo=?, situacao=?,equipamento=?, defeito=?, servico=?, tecnico=?, valor=? where os=?";
+
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, tipo);
+            pst.setString(2, cboOsSit.getSelectedItem().toString());
+            pst.setString(3, txtOsEquip.getText());
+            pst.setString(4, txtOsDef.getText());
+            pst.setString(5, txtOsServ.getText());
+            pst.setString(6, txtOsTec.getText());
+            //.replace substitui a virgula pelo ponto
+            pst.setString(7, txtOsValor.getText().replace(",", "."));
+            pst.setString(8, txtOs.getText());
+            //validacao dos campos obrigatorios
+            if ((txtCliId.getText().isEmpty()) || (txtOsEquip.getText().isEmpty()) || (txtOsDef.getText().isEmpty())) {
+                JOptionPane.showMessageDialog(null, "preencha todos os campos obrigatorios");
+
+            } else {
+                int adicionado = pst.executeUpdate();
+                if (adicionado > 0) {
+                    JOptionPane.showMessageDialog(null, "OS alterada com sucesso");
+
+                    txtOs.setText(null);
+                    txtData.setText(null);
+                    txtCliId.setText(null);
+                    txtOsEquip.setText(null);
+                    txtOsDef.setText(null);
+                    txtOsServ.setText(null);
+                    txtOsTec.setText(null);
+                    txtOsValor.setText(null);
+                    //habilitar os objetos
+                    btnOsAdicionar.setEnabled(true);
+                    txtCliPesquisar.setEnabled(true);
+                    tblClientes.setVisible(true);
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+
+    //fim metodo alterar uma OS
+    //inicio do metodo para excluir uma os
+    private void excluir_os() {
+        int confirma = JOptionPane.showConfirmDialog(null, "tem certeza que deseja excluir esta OS?", "Atencao", JOptionPane.YES_NO_OPTION);
+        if (confirma == JOptionPane.YES_OPTION) {
+            String sql = "delete from tbos where os=?";
+            try {
+                pst = conexao.prepareStatement(sql);
+                pst.setString(1, txtOs.getText());
+                int apagado = pst.executeUpdate();
+                if (apagado > 0) {
+                    JOptionPane.showMessageDialog(null, "Os excluida com sucesso");
+                    txtOs.setText(null);
+                    txtData.setText(null);
+                    txtCliId.setText(null);
+                    txtOsEquip.setText(null);
+                    txtOsDef.setText(null);
+                    txtOsServ.setText(null);
+                    txtOsTec.setText(null);
+                    txtOsValor.setText(null);
+                    //habilitar os objetos
+                    btnOsAdicionar.setEnabled(true);
+                    txtCliPesquisar.setEnabled(true);
+                    tblClientes.setVisible(true);
+                }
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -122,6 +213,7 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        cboOsSit = new javax.swing.JComboBox<>();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -153,7 +245,6 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         btnOsImprimir = new javax.swing.JButton();
         btnOsExcluir = new javax.swing.JButton();
         txtOsTec = new java.awt.TextField();
-        cboOsSit = new javax.swing.JComboBox<>();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -189,6 +280,13 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
             }
             public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
                 formInternalFrameOpened(evt);
+            }
+        });
+
+        cboOsSit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Na bancada", "Entrega OK", "Orçamento REPROVADO", "Aguardando Aprovação", "Aguardando peça", "Abandonado pelo cliente", "Retornou" }));
+        cboOsSit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboOsSitActionPerformed(evt);
             }
         });
 
@@ -393,6 +491,11 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         btnOsAlterar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/update_1.png"))); // NOI18N
         btnOsAlterar.setToolTipText("Alterar");
         btnOsAlterar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnOsAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOsAlterarActionPerformed(evt);
+            }
+        });
 
         btnOsPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/read_1.png"))); // NOI18N
         btnOsPesquisar.setToolTipText("Localizar");
@@ -410,17 +513,15 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         btnOsExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/delete_1.png"))); // NOI18N
         btnOsExcluir.setToolTipText("Deletar");
         btnOsExcluir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnOsExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOsExcluirActionPerformed(evt);
+            }
+        });
 
         txtOsTec.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtOsTecActionPerformed(evt);
-            }
-        });
-
-        cboOsSit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Na bancada", "Entrega OK", "Orçamento REPROVADO", "Aguardando Aprovação", "Aguardando peça", "Abandonado pelo cliente", "Retornou" }));
-        cboOsSit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboOsSitActionPerformed(evt);
             }
         });
 
@@ -443,11 +544,9 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel7)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel10)
-                                    .addComponent(jLabel9))))
+                            .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -500,7 +599,7 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtOsEquip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(7, 7, 7)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(txtOsDef, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -564,23 +663,23 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
 
     private void txtCliPesquisarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCliPesquisarKeyReleased
         // chamando o metodo pesquisar cliente:
- pesquisar_cliente();       
+        pesquisar_cliente();
     }//GEN-LAST:event_txtCliPesquisarKeyReleased
 
     private void rbtOrcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtOrcActionPerformed
-   // atribuindo um texto a variavel tipo se selecionado.
-   tipo = "orcamento";
+        // atribuindo um texto a variavel tipo se selecionado.
+        tipo = "orcamento";
     }//GEN-LAST:event_rbtOrcActionPerformed
 
     private void rbtOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtOsActionPerformed
-    // a linha abaixo atriui um texto a variavel tipo se o radion button estiver selecionado:
-    tipo = "os";
+        // a linha abaixo atriui um texto a variavel tipo se o radion button estiver selecionado:
+        tipo = "os";
     }//GEN-LAST:event_rbtOsActionPerformed
 
     private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
-    // ao abrir o form marcar o radion button orcamento:
-    rbtOrc.setSelected(true);
-    tipo = "orçamento";
+        // ao abrir o form marcar o radion button orcamento:
+        rbtOrc.setSelected(true);
+        tipo = "orcamento";
     }//GEN-LAST:event_formInternalFrameOpened
 
     private void btnOsAdicionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsAdicionarActionPerformed
@@ -601,6 +700,16 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         // chamando o metodo pesquisar
         pesquisar_os();
     }//GEN-LAST:event_btnOsPesquisarActionPerformed
+
+    private void btnOsAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsAlterarActionPerformed
+        // chamando o metodo alterar:
+        alterar_os();
+    }//GEN-LAST:event_btnOsAlterarActionPerformed
+
+    private void btnOsExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsExcluirActionPerformed
+        // chamando o metodo excluir:
+        excluir_os();
+    }//GEN-LAST:event_btnOsExcluirActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -640,5 +749,5 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
     private java.awt.TextField txtOsTec;
     private java.awt.TextField txtOsValor;
     // End of variables declaration//GEN-END:variables
-   
+
 }
