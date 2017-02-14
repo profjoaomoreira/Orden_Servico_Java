@@ -79,7 +79,37 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
                 JOptionPane.showMessageDialog(null, e);
             }
     }
-
+ //metodo para pesquisar uma os
+    private void pesquisar_os(){
+        //a linha abaixo cria uma caixa de entrada do tipo Joption Pane
+        String num_os=JOptionPane.showInputDialog("Numero da OS");
+        String sql= "select * from tbos where os= " + num_os;
+        try { 
+            pst=conexao.prepareStatement(sql);
+            rs=pst.executeQuery();
+            if (rs.next()) {
+                txtOs.setText(rs.getString(1));
+                txtData.setText(rs.getString(2));
+                //setando os radios buttons
+                String rbtTipo=rs.getString(3);
+                if (rbtTipo.equals("OS")){
+                    rbtOs.setSelected(true);
+                    tipo="OS";
+                                
+            } else {
+                    rbtOrc.setSelected(true);
+                    tipo="Orçamento";
+                }
+                
+            } else {
+                JOptionPane.showMessageDialog(null, "Os nao cadastra");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+        
+ 
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -98,7 +128,7 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         txtOs = new javax.swing.JTextField();
         txtData = new javax.swing.JTextField();
         rbtOrc = new javax.swing.JRadioButton();
-        rtbOs = new javax.swing.JRadioButton();
+        rbtOs = new javax.swing.JRadioButton();
         jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
@@ -169,8 +199,16 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         jLabel2.setText("Data");
 
         txtOs.setEditable(false);
+        txtOs.setEnabled(false);
+        txtOs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtOsActionPerformed(evt);
+            }
+        });
 
         txtData.setEditable(false);
+        txtData.setFont(new java.awt.Font("Tahoma", 1, 8)); // NOI18N
+        txtData.setEnabled(false);
 
         buttonGroup1.add(rbtOrc);
         rbtOrc.setText("Orçamento");
@@ -180,11 +218,11 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
             }
         });
 
-        buttonGroup1.add(rtbOs);
-        rtbOs.setText("Ordem de Serviço");
-        rtbOs.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup1.add(rbtOs);
+        rbtOs.setText("Ordem de Serviço");
+        rbtOs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rtbOsActionPerformed(evt);
+                rbtOsActionPerformed(evt);
             }
         });
 
@@ -197,20 +235,24 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(txtOs, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(46, 46, 46)
+                            .addComponent(txtOs, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addComponent(jLabel1)))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(46, 46, 46)
                                 .addComponent(jLabel2)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtData)))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(rbtOrc)
                         .addGap(18, 18, 18)
-                        .addComponent(rtbOs)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(rbtOs)
+                        .addContainerGap(10, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -226,7 +268,7 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(rbtOrc)
-                    .addComponent(rtbOs))
+                    .addComponent(rbtOs))
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
@@ -238,6 +280,7 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/pesquisa3.png"))); // NOI18N
 
+        txtCliId.setEnabled(false);
         txtCliId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtCliIdActionPerformed(evt);
@@ -354,6 +397,11 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         btnOsPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/read_1.png"))); // NOI18N
         btnOsPesquisar.setToolTipText("Localizar");
         btnOsPesquisar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnOsPesquisar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOsPesquisarActionPerformed(evt);
+            }
+        });
 
         btnOsImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/br/com/infox/icones/print.png"))); // NOI18N
         btnOsImprimir.setToolTipText("Imprimir");
@@ -524,10 +572,10 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
    tipo = "orcamento";
     }//GEN-LAST:event_rbtOrcActionPerformed
 
-    private void rtbOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rtbOsActionPerformed
+    private void rbtOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbtOsActionPerformed
     // a linha abaixo atriui um texto a variavel tipo se o radion button estiver selecionado:
     tipo = "os";
-    }//GEN-LAST:event_rtbOsActionPerformed
+    }//GEN-LAST:event_rbtOsActionPerformed
 
     private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
     // ao abrir o form marcar o radion button orcamento:
@@ -544,6 +592,15 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
         // chamando o metodo setar campos
         setar_campos();
     }//GEN-LAST:event_tblClientesMouseClicked
+
+    private void txtOsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtOsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtOsActionPerformed
+
+    private void btnOsPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOsPesquisarActionPerformed
+        // chamando o metodo pesquisar
+        pesquisar_os();
+    }//GEN-LAST:event_btnOsPesquisarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -571,7 +628,7 @@ JOptionPane.showMessageDialog(null, "OS emitida com sucesso");
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JRadioButton rbtOrc;
-    private javax.swing.JRadioButton rtbOs;
+    private javax.swing.JRadioButton rbtOs;
     private javax.swing.JTable tblClientes;
     private java.awt.TextField txtCliId;
     private java.awt.TextField txtCliPesquisar;
